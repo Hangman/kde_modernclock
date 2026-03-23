@@ -32,6 +32,19 @@ PlasmoidItem {
     // setting preferred size
     preferredRepresentation: fullRepresentation
     fullRepresentation: Item {
+        function updateDisplay() {
+            var time_format = plasmoid.configuration.use_24_hour_format ? "hh:mm" : "hh:mm AP"
+            var curDate = dataSource.data["Local"]["DateTime"]
+            if (!curDate) {
+                curDate = new Date()
+            }
+            display_day.text = Qt.formatDate(curDate, "dddd").toUpperCase()
+            display_date.text = Qt.formatDate(curDate, plasmoid.configuration.date_format).toUpperCase()
+            display_time.text = plasmoid.configuration.time_character + " " + Qt.formatTime(curDate, time_format) + " " + plasmoid.configuration.time_character
+            display_day.font.family = root.resolvedFontFamily(plasmoid.configuration.day_font_family, font_anurati.name)
+            display_date.font.family = root.resolvedFontFamily(plasmoid.configuration.date_font_family, font_poppins.name)
+            display_time.font.family = root.resolvedFontFamily(plasmoid.configuration.time_font_family, font_poppins.name)
+        }
 
         // applet default size
         Layout.minimumWidth: container.implicitWidth
@@ -47,33 +60,22 @@ PlasmoidItem {
             intervalAlignment: Plasma5Support.Types.AlignToMinute
             interval: 60000
 
-            property bool use24HourFormat: plasmoid.configuration.use_24_hour_format
-            property string timeCharacter: plasmoid.configuration.time_character
-            property string dateFormat: plasmoid.configuration.date_format
-            property string dayFontFamily: plasmoid.configuration.day_font_family
-            property string dateFontFamily: plasmoid.configuration.date_font_family
-            property string timeFontFamily: plasmoid.configuration.time_font_family
-            
-            onUse24HourFormatChanged: dataChanged()
-            onTimeCharacterChanged: dataChanged()
-            onDateFormatChanged: dataChanged()
-            onDayFontFamilyChanged: dataChanged()
-            onDateFontFamilyChanged: dataChanged()
-            onTimeFontFamilyChanged: dataChanged()
-
             onDataChanged: {
-                var time_format = use24HourFormat ? "hh:mm" : "hh:mm AP"
-                var curDate = dataSource.data["Local"]["DateTime"]
-                display_day.text = Qt.formatDate(curDate, "dddd").toUpperCase()
-                display_date.text = Qt.formatDate(curDate, dateFormat).toUpperCase()
-                display_time.text = timeCharacter + " " + Qt.formatTime(curDate, time_format) + " " + timeCharacter
-                display_day.font.family = root.resolvedFontFamily(dayFontFamily, font_anurati.name)
-                display_date.font.family = root.resolvedFontFamily(dateFontFamily, font_poppins.name)
-                display_time.font.family = root.resolvedFontFamily(timeFontFamily, font_poppins.name)
+                updateDisplay()
             }
-
-            
         }
+
+        Connections {
+            target: plasmoid.configuration
+            function onValueChanged(key, value) {
+                if (key === "day_font_family" || key === "date_font_family" || key === "time_font_family" ||
+                    key === "date_format" || key === "time_character" || key === "use_24_hour_format") {
+                    updateDisplay()
+                }
+            }
+        }
+
+        Component.onCompleted: updateDisplay()
 
         // Main Content
         Column {
