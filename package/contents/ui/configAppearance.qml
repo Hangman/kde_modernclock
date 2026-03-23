@@ -1,7 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.0
 import QtQuick.Controls 2.0
-import QtQuick.Dialogs
+import QtQuick.Dialogs 1.3
 import org.kde.kirigami 2.4 as Kirigami
 
 Kirigami.ScrollablePage {
@@ -49,6 +49,12 @@ Kirigami.ScrollablePage {
             }
             TextField {
                 id: dayFontFamily
+                readOnly: true
+                Layout.fillWidth: true
+            }
+            Button {
+                text: i18n("Choose…")
+                onClicked: dayFontDialog.open()
             }
         }
         NumberField {
@@ -80,6 +86,12 @@ Kirigami.ScrollablePage {
             }
             TextField {
                 id: dateFontFamily
+                readOnly: true
+                Layout.fillWidth: true
+            }
+            Button {
+                text: i18n("Choose…")
+                onClicked: dateFontDialog.open()
             }
         }
         NumberField {
@@ -120,6 +132,12 @@ Kirigami.ScrollablePage {
             }
             TextField {
                 id: timeFontFamily
+                readOnly: true
+                Layout.fillWidth: true
+            }
+            Button {
+                text: i18n("Choose…")
+                onClicked: timeFontDialog.open()
             }
         }
         NumberField {
@@ -147,5 +165,26 @@ Kirigami.ScrollablePage {
             id: timeFontColor
             color: cfg_time_font_color
         }
+    }
+
+    FontDialog {
+        id: dayFontDialog
+        title: i18n("Select day font")
+        font.family: dayFontFamily.text
+        onAccepted: dayFontFamily.text = font.family
+    }
+
+    FontDialog {
+        id: dateFontDialog
+        title: i18n("Select date font")
+        font.family: dateFontFamily.text
+        onAccepted: dateFontFamily.text = font.family
+    }
+
+    FontDialog {
+        id: timeFontDialog
+        title: i18n("Select time font")
+        font.family: timeFontFamily.text
+        onAccepted: timeFontFamily.text = font.family
     }
 }
