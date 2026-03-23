@@ -12,8 +12,11 @@ Kirigami.ScrollablePage {
     property alias cfg_show_date: showDate.checked
     property alias cfg_show_time: showTime.checked
     property alias cfg_day_font_size: dayFontSize.value
+    property alias cfg_day_font_family: dayFontFamily.text
     property alias cfg_date_font_size: dateFontSize.value
+    property alias cfg_date_font_family: dateFontFamily.text
     property alias cfg_time_font_size: timeFontSize.value
+    property alias cfg_time_font_family: timeFontFamily.text
     property alias cfg_day_letter_spacing: dayLetterSpacing.value
     property alias cfg_day_font_color: dayFontColor.color
     property alias cfg_date_letter_spacing: dateLetterSpacing.value
@@ -40,6 +43,14 @@ Kirigami.ScrollablePage {
             id: dayFontSize
             label: i18n("Font Size")
         }
+        RowLayout {
+            Label {
+                text: i18n("Font Family")
+            }
+            TextField {
+                id: dayFontFamily
+            }
+        }
         NumberField {
             id: dayLetterSpacing
             label: i18n("Letter Spacing")
@@ -62,6 +73,14 @@ Kirigami.ScrollablePage {
         NumberField {
             id: dateFontSize
             label: i18n("Font Size")
+        }
+        RowLayout {
+            Label {
+                text: i18n("Font Family")
+            }
+            TextField {
+                id: dateFontFamily
+            }
         }
         NumberField {
             id: dateLetterSpacing
@@ -94,6 +113,14 @@ Kirigami.ScrollablePage {
         NumberField {
             id: timeFontSize
             label: i18n("Font Size")
+        }
+        RowLayout {
+            Label {
+                text: i18n("Font Family")
+            }
+            TextField {
+                id: timeFontFamily
+            }
         }
         NumberField {
             id: timeLetterSpacing
