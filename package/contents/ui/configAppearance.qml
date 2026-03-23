@@ -1,11 +1,11 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.0
 import QtQuick.Controls 2.0
-import QtQuick.Dialogs 1.3
 import org.kde.kirigami 2.4 as Kirigami
 
 Kirigami.ScrollablePage {
     id: appearancePage
+    property var activeFontField
     
     // properties
     property alias cfg_show_day: showDay.checked
@@ -26,6 +26,22 @@ Kirigami.ScrollablePage {
     property alias cfg_time_character: timeCharacter.text
     property alias cfg_date_format: dateFormat.text
     property alias cfg_date_font_color: dateFontColor.color
+
+    function openFontPicker(targetField, dialogTitle) {
+        activeFontField = targetField
+        fontPicker.title = dialogTitle
+        var availableFonts = Qt.fontFamilies()
+        fontFamilyCombo.model = availableFonts
+        var selectedIndex = 0
+        for (var i = 0; i < availableFonts.length; i++) {
+            if (availableFonts[i] === targetField.text) {
+                selectedIndex = i
+                break
+            }
+        }
+        fontFamilyCombo.currentIndex = selectedIndex
+        fontPicker.open()
+    }
 
     Kirigami.FormLayout {
         Title {
@@ -54,7 +70,7 @@ Kirigami.ScrollablePage {
             }
             Button {
                 text: i18n("Choose…")
-                onClicked: dayFontDialog.open()
+                onClicked: appearancePage.openFontPicker(dayFontFamily, i18n("Select day font"))
             }
         }
         NumberField {
@@ -91,7 +107,7 @@ Kirigami.ScrollablePage {
             }
             Button {
                 text: i18n("Choose…")
-                onClicked: dateFontDialog.open()
+                onClicked: appearancePage.openFontPicker(dateFontFamily, i18n("Select date font"))
             }
         }
         NumberField {
@@ -137,7 +153,7 @@ Kirigami.ScrollablePage {
             }
             Button {
                 text: i18n("Choose…")
-                onClicked: timeFontDialog.open()
+                onClicked: appearancePage.openFontPicker(timeFontFamily, i18n("Select time font"))
             }
         }
         NumberField {
@@ -167,24 +183,29 @@ Kirigami.ScrollablePage {
         }
     }
 
-    FontDialog {
-        id: dayFontDialog
-        title: i18n("Select day font")
-        font.family: dayFontFamily.text
-        onAccepted: dayFontFamily.text = font.family
-    }
+    Dialog {
+        id: fontPicker
+        modal: true
+        standardButtons: Dialog.Ok | Dialog.Cancel
+        width: 400
 
-    FontDialog {
-        id: dateFontDialog
-        title: i18n("Select date font")
-        font.family: dateFontFamily.text
-        onAccepted: dateFontFamily.text = font.family
-    }
+        contentItem: ColumnLayout {
+            spacing: Kirigami.Units.smallSpacing
 
-    FontDialog {
-        id: timeFontDialog
-        title: i18n("Select time font")
-        font.family: timeFontFamily.text
-        onAccepted: timeFontFamily.text = font.family
+            Label {
+                text: i18n("Choose an installed font family")
+            }
+
+            ComboBox {
+                id: fontFamilyCombo
+                Layout.fillWidth: true
+            }
+        }
+
+        onAccepted: {
+            if (activeFontField) {
+                activeFontField.text = fontFamilyCombo.currentText
+            }
+        }
     }
 }
