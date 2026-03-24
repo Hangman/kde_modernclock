@@ -1,10 +1,9 @@
 import QtQml 2.15
-import QtQuick 2.0
-import QtQuick.Layouts 1.0
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 import org.kde.plasma.components as PlasmaComponents
 import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
-import org.kde.plasma.plasma5support as Plasma5Support
 
 PlasmoidItem {
     id: root
@@ -33,17 +32,25 @@ PlasmoidItem {
     preferredRepresentation: fullRepresentation
     fullRepresentation: Item {
         function updateDisplay() {
-            var time_format = plasmoid.configuration.use_24_hour_format ? "hh:mm" : "hh:mm AP"
-            var curDate = dataSource.data["Local"]["DateTime"]
-            if (!curDate) {
-                curDate = new Date()
-            }
-            display_day.text = Qt.formatDate(curDate, "dddd").toUpperCase()
-            display_date.text = Qt.formatDate(curDate, plasmoid.configuration.date_format).toUpperCase()
-            display_time.text = plasmoid.configuration.time_character + " " + Qt.formatTime(curDate, time_format) + " " + plasmoid.configuration.time_character
+            var time_format = plasmoid.configuration.use_24_hour_format ? "HH:mm" : "hh:mm AP"
+            var curDate = new Date()
+            var styleCharacter = (plasmoid.configuration.time_character || "").trim().slice(0, 1)
+            var formattedTime = Qt.formatTime(curDate, time_format)
+
+            display_day.text = Qt.formatDate(curDate, "dddd")
+            display_date.text = Qt.formatDate(curDate, plasmoid.configuration.date_format)
+            display_time.text = styleCharacter.length > 0
+                ? styleCharacter + " " + formattedTime + " " + styleCharacter
+                : formattedTime
             display_day.font.family = root.resolvedFontFamily(plasmoid.configuration.day_font_family, font_anurati.name)
             display_date.font.family = root.resolvedFontFamily(plasmoid.configuration.date_font_family, font_poppins.name)
             display_time.font.family = root.resolvedFontFamily(plasmoid.configuration.time_font_family, font_poppins.name)
+        }
+
+        function startMinuteUpdates() {
+            var now = new Date()
+            alignToMinuteTimer.interval = Math.max(1000, ((60 - now.getSeconds()) * 1000) - now.getMilliseconds())
+            alignToMinuteTimer.start()
         }
 
         // applet default size
@@ -52,17 +59,22 @@ PlasmoidItem {
         Layout.preferredWidth: Layout.minimumWidth
         Layout.preferredHeight: Layout.minimumHeight
 
-        // Updating time every minute
-        Plasma5Support.DataSource {
-            id: dataSource
-            engine: "time"
-            connectedSources: ["Local"]
-            intervalAlignment: Plasma5Support.Types.AlignToMinute
-            interval: 60000
-
-            onDataChanged: {
+        // Align to the next minute once, then update every minute.
+        Timer {
+            id: alignToMinuteTimer
+            repeat: false
+            onTriggered: {
                 updateDisplay()
+                minuteTimer.start()
             }
+        }
+
+        Timer {
+            id: minuteTimer
+            interval: 60000
+            repeat: true
+            running: false
+            onTriggered: updateDisplay()
         }
 
         Connections {
@@ -75,7 +87,10 @@ PlasmoidItem {
             }
         }
 
-        Component.onCompleted: updateDisplay()
+        Component.onCompleted: {
+            updateDisplay()
+            startMinuteUpdates()
+        }
 
         // Main Content
         Column {

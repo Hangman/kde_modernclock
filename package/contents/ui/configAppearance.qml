@@ -1,7 +1,7 @@
 import QtQuick 2.15
-import QtQuick.Layouts 1.0
-import QtQuick.Controls 2.0
-import org.kde.kirigami 2.4 as Kirigami
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
+import org.kde.kirigami 2.20 as Kirigami
 
 Kirigami.ScrollablePage {
     id: appearancePage
@@ -120,7 +120,17 @@ Kirigami.ScrollablePage {
             }
             TextField {
                 id: dateFormat
+                Layout.fillWidth: true
+                placeholderText: i18n("e.g. dd MMM yyyy")
+                selectByMouse: true
             }
+        }
+        Label {
+            text: i18n("Uses Qt date format patterns (example: dddd, dd MMM yyyy).")
+            color: Kirigami.Theme.disabledTextColor
+            font.pixelSize: Kirigami.Theme.smallFont.pixelSize
+            wrapMode: Text.Wrap
+            Layout.fillWidth: true
         }
         ColorDial {
             id: dateFontColor
@@ -166,6 +176,8 @@ Kirigami.ScrollablePage {
             }
             CheckBox {
                 id: use24HourFormat
+                ToolTip.visible: hovered
+                ToolTip.text: i18n("Enabled: 00–23, disabled: 01–12 AM/PM")
             }
         }
         RowLayout {
@@ -175,7 +187,16 @@ Kirigami.ScrollablePage {
             TextField {
                 id: timeCharacter
                 maximumLength: 1
+                placeholderText: "-"
+                selectByMouse: true
             }
+        }
+        Label {
+            text: i18n("Optional character shown before and after the time.")
+            color: Kirigami.Theme.disabledTextColor
+            font.pixelSize: Kirigami.Theme.smallFont.pixelSize
+            wrapMode: Text.Wrap
+            Layout.fillWidth: true
         }
         ColorDial {
             id: timeFontColor

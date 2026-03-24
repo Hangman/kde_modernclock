@@ -1,6 +1,6 @@
 import QtQuick 2.15
-import QtQuick.Layouts 1.0
-import QtQuick.Controls 2.0
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 RowLayout {
     id: numberField
@@ -14,6 +14,8 @@ RowLayout {
         id: numberField_spinbox
         from: 1
         to: 999
+        stepSize: 1
+        editable: true
+        wheelEnabled: false
     }
 }
-
