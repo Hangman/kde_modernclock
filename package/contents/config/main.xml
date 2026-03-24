@@ -18,6 +18,9 @@
         <entry name="show_day" type="Bool">
             <default>true</default>
         </entry>
+        <entry name="day_case" type="String">
+            <default>default</default>
+        </entry>
         <entry name="date_font_size" type="Int">
             <default>19</default>
         </entry>
@@ -29,6 +32,9 @@
         </entry>
         <entry name="date_format" type="String">
             <default>dd MMM yyyy</default>
+        </entry>
+        <entry name="date_locale" type="String">
+            <default></default>
         </entry>
         <entry name="show_date" type="Bool">
             <default>true</default>

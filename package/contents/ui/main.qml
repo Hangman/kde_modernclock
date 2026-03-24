@@ -12,8 +12,30 @@ PlasmoidItem {
         var family = (configuredFamily || "").trim()
         return family.length > 0 ? family : fallbackFamily
     }
-    
-    
+
+    function resolvedDateLocale(configuredLocale) {
+        var localeCode = (configuredLocale || "").trim()
+        return localeCode.length > 0 ? Qt.locale(localeCode) : Qt.locale()
+    }
+
+    function applyDayCase(dayText, configuredCase) {
+        var dayCase = (configuredCase || "default").trim()
+        if (dayCase === "upper") {
+            return dayText.toLocaleUpperCase()
+        }
+        if (dayCase === "lower") {
+            return dayText.toLocaleLowerCase()
+        }
+        if (dayCase === "capitalized") {
+            var normalized = dayText.toLocaleLowerCase()
+            if (normalized.length === 0) {
+                return normalized
+            }
+            return normalized.charAt(0).toLocaleUpperCase() + normalized.slice(1)
+        }
+        return dayText
+    }
+
     // setting background as transparent with a drop shadow
     Plasmoid.backgroundHints: PlasmaCore.Types.ShadowBackground | PlasmaCore.Types.ConfigurableBackground
     
@@ -36,9 +58,10 @@ PlasmoidItem {
             var curDate = new Date()
             var styleCharacter = (plasmoid.configuration.time_character || "").trim().slice(0, 1)
             var formattedTime = Qt.formatTime(curDate, time_format)
+            var dateLocale = root.resolvedDateLocale(plasmoid.configuration.date_locale)
 
-            display_day.text = Qt.formatDate(curDate, "dddd")
-            display_date.text = Qt.formatDate(curDate, plasmoid.configuration.date_format)
+            display_day.text = root.applyDayCase(dateLocale.toString(curDate, "dddd"), plasmoid.configuration.day_case)
+            display_date.text = dateLocale.toString(curDate, plasmoid.configuration.date_format)
             display_time.text = styleCharacter.length > 0
                 ? styleCharacter + " " + formattedTime + " " + styleCharacter
                 : formattedTime
@@ -81,7 +104,7 @@ PlasmoidItem {
             target: plasmoid.configuration
             function onValueChanged(key, value) {
                 if (key === "day_font_family" || key === "date_font_family" || key === "time_font_family" ||
-                    key === "date_format" || key === "time_character" || key === "use_24_hour_format") {
+                    key === "date_format" || key === "date_locale" || key === "day_case" || key === "time_character" || key === "use_24_hour_format") {
                     updateDisplay()
                 }
             }
