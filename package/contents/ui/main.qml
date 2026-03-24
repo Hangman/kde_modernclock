@@ -36,6 +36,22 @@ PlasmoidItem {
         return dayText
     }
 
+
+    function localePrefers24HourTime(locale) {
+        var shortFormat = locale.timeFormat(Locale.ShortFormat)
+        // Qt uses either 24-hour tokens (H/HH) or 12-hour tokens (h/hh with AM/PM marker)
+        return shortFormat.indexOf("H") !== -1
+    }
+
+    function initialize24HourFormatFromLocale() {
+        if (plasmoid.configuration.use_24_hour_format_initialized) {
+            return
+        }
+
+        var shouldUse24Hour = root.localePrefers24HourTime(Qt.locale())
+        plasmoid.configuration.use_24_hour_format = shouldUse24Hour
+        plasmoid.configuration.use_24_hour_format_initialized = true
+    }
     // setting background as transparent with a drop shadow
     Plasmoid.backgroundHints: PlasmaCore.Types.ShadowBackground | PlasmaCore.Types.ConfigurableBackground
     
@@ -111,6 +127,7 @@ PlasmoidItem {
         }
 
         Component.onCompleted: {
+            root.initialize24HourFormatFromLocale()
             updateDisplay()
             startMinuteUpdates()
         }
