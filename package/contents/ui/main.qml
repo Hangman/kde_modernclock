@@ -135,6 +135,7 @@ PlasmoidItem {
                 font.letterSpacing: plasmoid.configuration.day_letter_spacing
                 color: plasmoid.configuration.day_font_color
                 anchors.horizontalCenter: parent.horizontalCenter
+                anchors.horizontalCenterOffset: font.letterSpacing / 2
                 horizontalAlignment: Text.AlignHCenter 
             }
 
@@ -151,6 +152,7 @@ PlasmoidItem {
                 color: plasmoid.configuration.date_font_color
                 horizontalAlignment: Text.AlignHCenter
                 anchors.horizontalCenter: parent.horizontalCenter
+                anchors.horizontalCenterOffset: font.letterSpacing / 2
             }
 
             // The Time
@@ -166,6 +168,7 @@ PlasmoidItem {
                 font.letterSpacing: plasmoid.configuration.time_letter_spacing
                 horizontalAlignment: Text.AlignHCenter
                 anchors.horizontalCenter: parent.horizontalCenter
+                anchors.horizontalCenterOffset: font.letterSpacing / 2
             }
         }
     }
